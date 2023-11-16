@@ -1,4 +1,6 @@
 
+import os
+
 from commands import (
     CreateBookmarksTableCommand as initialize_db,
     AddBookmarkCommand as add_bookmark,
@@ -38,6 +40,9 @@ def add():
 def delete():
     return get_label("Id: ")
 
+def clear_screen():
+    os.system("cls" if os.name == "nt" else "clear")
+
 class Option:
     def __init__(self, option, command, extra=None):
         self.option = option
@@ -63,7 +68,9 @@ if __name__ == "__main__":
         'Q': Option("Quit", QuitCommand())
     }
 
+   clear_screen()
    print_options(options)
 
    choice = get_choice_from_input(options)
+   clear_screen()
    choice.run()
