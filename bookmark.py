@@ -1,8 +1,23 @@
 
 from commands import (
     CreateBookmarksTableCommand as initialize_db,
+    QuitCommand
 )
 
+
+def print_options(options):
+    for short_key, option in options.items():
+        print(f"({short_key}) {option} ")
+    print()
+
+def valid_option(choice, options):
+    return choice in options or choice.upper() in options
+
+def get_choice_from_input(options):
+    choice = input("Choose an option: ")
+    while not valid_option(choice, options):
+        choice = input("Choose an option: ")
+    return options[choice.upper()]
 
 class Option:
     def __init__(self, option, command, extra=None):
@@ -20,4 +35,12 @@ class Option:
 
 if __name__ == "__main__":
    initialize_db().execute()
-   print("Welcome")
+
+   options = {
+        'Q': Option("Quit", QuitCommand())
+    }
+
+   print_options(options)
+
+   choice = get_choice_from_input(options)
+   choice.run()
