@@ -57,9 +57,7 @@ class Option:
     def __str__(self):
         return self.option
 
-if __name__ == "__main__":
-   initialize_db().execute()
-
+def main():
    options = {
         'A': Option("Add a bookamrk", add_bookmark(), extra=add),
         'B': Option("List bookmarks by date", list_bookmarks()),
@@ -74,3 +72,11 @@ if __name__ == "__main__":
    choice = get_choice_from_input(options)
    clear_screen()
    choice.run()
+
+   input("Press ENTER to return to options")
+
+if __name__ == "__main__":
+   initialize_db().execute()
+
+   while True:
+       main()
