@@ -1,6 +1,7 @@
 
 from commands import (
     CreateBookmarksTableCommand as initialize_db,
+    ListBookmarksCommand as list_bookmarks,
     QuitCommand
 )
 
@@ -37,6 +38,7 @@ if __name__ == "__main__":
    initialize_db().execute()
 
    options = {
+        'B': Option("List bookmarks by date", list_bookmarks()),
         'Q': Option("Quit", QuitCommand())
     }
 
