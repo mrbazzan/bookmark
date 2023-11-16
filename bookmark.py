@@ -39,6 +39,7 @@ if __name__ == "__main__":
 
    options = {
         'B': Option("List bookmarks by date", list_bookmarks()),
+        'T': Option("List bookamrks by title", list_bookmarks(order_by="title")),
         'Q': Option("Quit", QuitCommand())
     }
 
