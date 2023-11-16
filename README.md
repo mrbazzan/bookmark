@@ -9,3 +9,22 @@ stored in a database
 > is the command-line software to do it.
 
 Database used: ``sqlite``
+
+How it works
+------------
+
+starts running
+create database to store bookmarks if it doesn't exist yet
+clears the screen
+print the options
+gets the user's choice
+display the result of the user's choice
+press ``Q`` when done.
+
+Setup
+-----
+
+```bash
+git clone git@github.com:mrbazzan/bookmark.git
+python3 bookmark.py
+```
