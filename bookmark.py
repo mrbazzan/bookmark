@@ -3,6 +3,7 @@ from commands import (
     CreateBookmarksTableCommand as initialize_db,
     AddBookmarkCommand as add_bookmark,
     ListBookmarksCommand as list_bookmarks,
+    DeleteBookmarkCommand as delete_bookmark,
     QuitCommand
 )
 
@@ -34,6 +35,9 @@ def add():
     data["notes"] = get_label("Notes: ", required=False)
     return data
 
+def delete():
+    return get_label("Id: ")
+
 class Option:
     def __init__(self, option, command, extra=None):
         self.option = option
@@ -55,6 +59,7 @@ if __name__ == "__main__":
         'A': Option("Add a bookamrk", add_bookmark(), extra=add),
         'B': Option("List bookmarks by date", list_bookmarks()),
         'T': Option("List bookamrks by title", list_bookmarks(order_by="title")),
+        'D': Option("Delete a bookmark", delete_bookmark(), extra=delete),
         'Q': Option("Quit", QuitCommand())
     }
 
