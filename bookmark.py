@@ -1,6 +1,7 @@
 
 from commands import (
     CreateBookmarksTableCommand as initialize_db,
+    AddBookmarkCommand as add_bookmark,
     ListBookmarksCommand as list_bookmarks,
     QuitCommand
 )
@@ -20,6 +21,19 @@ def get_choice_from_input(options):
         choice = input("Choose an option: ")
     return options[choice.upper()]
 
+def get_label(label, required=True):
+    prompt = input(label)
+    while required and (not prompt):
+        prompt = input(label)
+    return prompt
+
+def add():
+    data = dict()
+    data["title"] = get_label("Title: ")
+    data["url"] = get_label("Url: ")
+    data["notes"] = get_label("Notes: ", required=False)
+    return data
+
 class Option:
     def __init__(self, option, command, extra=None):
         self.option = option
@@ -38,6 +52,7 @@ if __name__ == "__main__":
    initialize_db().execute()
 
    options = {
+        'A': Option("Add a bookamrk", add_bookmark(), extra=add),
         'B': Option("List bookmarks by date", list_bookmarks()),
         'T': Option("List bookamrks by title", list_bookmarks(order_by="title")),
         'Q': Option("Quit", QuitCommand())
