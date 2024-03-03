@@ -68,8 +68,10 @@ class GithubStarImportCommand:
 
                 timestamp = None
                 if preserve_timestamps:
-                    timestamp = repo_info.get("starred_at")
-
+                    timestamp = datetime.strptime(
+                        repo_info.get("starred_at"),
+                        '%Y-%m-%dT%H:%M:%SZ'
+                    )
                 AddBookmarkCommand().execute(bookmark, timestamp)
 
         return f"Imported {imported_bookmark} bookmarks from starred repos!"
