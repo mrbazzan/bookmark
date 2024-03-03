@@ -48,19 +48,6 @@ class DeleteBookmarkCommand:
         return f"Bookmark deleted!"
 
 class GithubStarImportCommand:
-    @staticmethod
-    def _get_next_link(links):
-        for link in links:
-            if link.endswith("rel=\"next\""):
-                return link.split(";")[0].strip()[1:-1]
-        return
-
-    @staticmethod
-    def _process_url(url):
-        r = requests.get(url, headers={"Accept": "application/vnd.github.v3.star+json"})
-        links = r.headers.get("Link", "").split(",")
-        return GithubStarImportCommand._get_next_link(links), r.json()
-
     def execute(self, data):
         github_username  = data.get("github_username")
         preserve_timestamps = data.get("preserve")
@@ -68,8 +55,9 @@ class GithubStarImportCommand:
 
         url = f"https://api.github.com/users/{github_username}/starred"
         while url:
-            url, response = GithubStarImportCommand._process_url(url)
-            for repo_info in response:
+            response = requests.get(url, headers={"Accept": "application/vnd.github.v3.star+json"})
+            url = response.links.get('next', {}).get('url', None)
+            for repo_info in response.json():
                 repo = repo_info.get("repo")
                 bookmark = {
                     "title": repo.get("full_name"),
