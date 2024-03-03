@@ -6,6 +6,7 @@ from commands import (
     AddBookmarkCommand as add_bookmark,
     ListBookmarksCommand as list_bookmarks,
     DeleteBookmarkCommand as delete_bookmark,
+    GithubStarImportCommand as stars_import,
     QuitCommand
 )
 
@@ -40,6 +41,15 @@ def add():
 def delete():
     return get_label("Id: ")
 
+def github_stars_prompt():
+    return {
+        "github_username": get_label("Github username: "),
+        "preserve": get_label(
+            "Preserve timestamps [Y/n]: ",
+            required=False
+        ) in {'Y', 'y', ''}
+    }
+
 def clear_screen():
     os.system("cls" if os.name == "nt" else "clear")
 
@@ -63,6 +73,7 @@ def main():
         'B': Option("List bookmarks by date", list_bookmarks()),
         'T': Option("List bookamrks by title", list_bookmarks(order_by="title")),
         'D': Option("Delete a bookmark", delete_bookmark(), extra=delete),
+        'G': Option("Import GitHub stars", stars_import(), extra=github_stars_prompt),
         'Q': Option("Quit", QuitCommand())
     }
 
