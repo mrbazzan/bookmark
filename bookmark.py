@@ -61,7 +61,7 @@ class Option:
 
     def run(self):
         prep = self.extra() if self.extra else None
-        output = self.command.execute(prep) if prep else self.command.execute()
+        output = self.command.execute(prep)
         print(output)
 
     def __str__(self):

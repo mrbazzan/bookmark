@@ -2,17 +2,22 @@
 import sys
 import requests
 
+from abc import ABC, abstractmethod
 from database import DatabaseManager
 from datetime import datetime
 
 db = DatabaseManager("bookmark.db")
 
-class QuitCommand:
-    def execute(self):
+class Command(ABC):
+    def execute(self, data):
+        raise NotImplementedError
+
+class QuitCommand(Command):
+    def execute(self, data=None):
         sys.exit()
 
-class CreateBookmarksTableCommand:
-    def execute(self):
+class CreateBookmarksTableCommand(Command):
+    def execute(self, data=None):
         db.create_table(
             'bookmarks',
             {
@@ -24,30 +29,30 @@ class CreateBookmarksTableCommand:
             }
         )
 
-class AddBookmarkCommand:
+class AddBookmarkCommand(Command):
     def execute(self, data, timestamp=None):
         data["date_added"] = timestamp or datetime.utcnow().isoformat()
         db.add_record('bookmarks', data)
         return f"Bookmark '{data.get('title')}' added!"
 
-class ListBookmarksCommand:
+class ListBookmarksCommand(Command):
     def __init__(self, order_by="date_added"):
         self.order_by = order_by
 
-    def execute(self):
+    def execute(self, data=None):
         output = db.select_records(
             'bookmarks', order_by=self.order_by
         )
         return output.fetchall()
 
-class DeleteBookmarkCommand:
+class DeleteBookmarkCommand(Command):
     def execute(self, data):
         db.remove_record(
             'bookmarks', {"id": data}
         )
         return f"Bookmark deleted!"
 
-class GithubStarImportCommand:
+class GithubStarImportCommand(Command):
     def execute(self, data):
         github_username  = data.get("github_username")
         preserve_timestamps = data.get("preserve")
