@@ -54,26 +54,42 @@ def clear_screen():
     os.system("cls" if os.name == "nt" else "clear")
 
 class Option:
-    def __init__(self, option, command, extra=None):
+    def __init__(self, option, command, extra=None, msg="{result}"):
         self.option = option
         self.command = command
         self.extra = extra
+        self.msg = msg
 
     def run(self):
         prep = self.extra() if self.extra else None
-        output = self.command.execute(prep)
-        print(output)
+        status, result = self.command.execute(prep)
+
+        processed_result = ''
+        if isinstance(result, list):
+            processed_result += '\n'.join(
+                    ' '.join(str(item) for item in bmark)
+                    for bmark in result
+            )
+        else:
+            processed_result = result
+
+        if status:
+            print(self.msg.format(result=processed_result))
 
     def __str__(self):
         return self.option
 
 def main():
    options = {
-        'A': Option("Add a bookamrk", add_bookmark(), extra=add),
+        'A': Option("Add a bookamrk", add_bookmark(),
+                    extra=add, msg="Bookmark '{result}' added!"),
         'B': Option("List bookmarks by date", list_bookmarks()),
         'T': Option("List bookamrks by title", list_bookmarks(order_by="title")),
-        'D': Option("Delete a bookmark", delete_bookmark(), extra=delete),
-        'G': Option("Import GitHub stars", stars_import(), extra=github_stars_prompt),
+        'D': Option("Delete a bookmark",
+                    delete_bookmark(), extra=delete, msg="Bookmark '{result}' deleted!"),
+        'G': Option("Import GitHub stars",
+                    stars_import(), extra=github_stars_prompt,
+                    msg="Imported '{result}' bookmarks from starred repos!"),
         'Q': Option("Quit", QuitCommand())
     }
 

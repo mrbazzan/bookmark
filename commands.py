@@ -28,12 +28,13 @@ class CreateBookmarksTableCommand(Command):
                 "date_added": "TEXT NOT NULL"
             }
         )
+        return (True, None)
 
 class AddBookmarkCommand(Command):
     def execute(self, data, timestamp=None):
         data["date_added"] = timestamp or datetime.utcnow().isoformat()
         db.add_record('bookmarks', data)
-        return f"Bookmark '{data.get('title')}' added!"
+        return (True, data.get("title"))
 
 class ListBookmarksCommand(Command):
     def __init__(self, order_by="date_added"):
@@ -43,14 +44,14 @@ class ListBookmarksCommand(Command):
         output = db.select_records(
             'bookmarks', order_by=self.order_by
         )
-        return output.fetchall()
+        return (True, output.fetchall())
 
 class DeleteBookmarkCommand(Command):
     def execute(self, data):
         db.remove_record(
             'bookmarks', {"id": data}
         )
-        return f"Bookmark deleted!"
+        return (True, data)
 
 class GithubStarImportCommand(Command):
     def execute(self, data):
@@ -79,4 +80,4 @@ class GithubStarImportCommand(Command):
                     )
                 AddBookmarkCommand().execute(bookmark, timestamp)
 
-        return f"Imported {imported_bookmark} bookmarks from starred repos!"
+        return (True, imported_bookmark)
