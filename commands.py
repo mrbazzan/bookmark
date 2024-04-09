@@ -3,10 +3,10 @@ import sys
 import requests
 
 from abc import ABC, abstractmethod
-from database import DatabaseManager
+from persistence import BookmarkDatabase
 from datetime import datetime
 
-db = DatabaseManager("bookmark.db")
+bookmark_db = BookmarkDatabase()
 
 class Command(ABC):
     def execute(self, data):
@@ -16,24 +16,10 @@ class QuitCommand(Command):
     def execute(self, data=None):
         sys.exit()
 
-class CreateBookmarksTableCommand(Command):
-    def execute(self, data=None):
-        db.create_table(
-            'bookmarks',
-            {
-                "id": "INTEGER PRIMARY KEY AUTOINCREMENT",
-                "title": "TEXT NOT NULL",
-                "url": "TEXT NOT NULL",
-                "notes": "TEXT",
-                "date_added": "TEXT NOT NULL"
-            }
-        )
-        return (True, None)
-
 class AddBookmarkCommand(Command):
     def execute(self, data, timestamp=None):
         data["date_added"] = timestamp or datetime.utcnow().isoformat()
-        db.add_record('bookmarks', data)
+        bookmark_db.add(data)
         return (True, data.get("title"))
 
 class ListBookmarksCommand(Command):
@@ -41,16 +27,11 @@ class ListBookmarksCommand(Command):
         self.order_by = order_by
 
     def execute(self, data=None):
-        output = db.select_records(
-            'bookmarks', order_by=self.order_by
-        )
-        return (True, output.fetchall())
+        return True, bookmark_db.read(order_by=self.order_by)
 
 class DeleteBookmarkCommand(Command):
     def execute(self, data):
-        db.remove_record(
-            'bookmarks', {"id": data}
-        )
+        bookmark_db.delete(data)
         return (True, data)
 
 class GithubStarImportCommand(Command):

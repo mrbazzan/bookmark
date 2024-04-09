@@ -2,7 +2,6 @@
 import os
 
 from commands import (
-    CreateBookmarksTableCommand as initialize_db,
     AddBookmarkCommand as add_bookmark,
     ListBookmarksCommand as list_bookmarks,
     DeleteBookmarkCommand as delete_bookmark,
@@ -103,7 +102,5 @@ def main():
    input("Press ENTER to return to options")
 
 if __name__ == "__main__":
-   initialize_db().execute()
-
    while True:
        main()
